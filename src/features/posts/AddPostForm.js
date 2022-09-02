@@ -1,28 +1,44 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { postAdded } from "./postsSlice";
+import { postAdded, addNewPost } from "./postsSlice";
 import { selectAllUsers } from "../users/usersSlice";
+import { useNavigate } from "react-router-dom";
 
 const AddPostForm = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const users = useSelector(selectAllUsers);
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [userId, setUserId] = useState("");
+  const [addRequestStatus, setAddRequestStatus] = useState("idle");
+
+  const canSave =
+    [content, title, userId].every(Boolean) && addRequestStatus === "idle";
 
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onContentChanged = (e) => setContent(e.target.value);
   const onAuthorChanged = (e) => setUserId(e.target.value);
 
-  const canSave = Boolean(content) && Boolean(title) && Boolean(userId);
+  const onSavePostClicked = async () => {
+    if (canSave) {
+      try {
+        setAddRequestStatus("pending");
 
-  const onSavePostClicked = () => {
-    if (title && content) {
-      dispatch(postAdded(title, content, userId));
+        const resultPayload = await dispatch(
+          addNewPost({ title, body: content, userId })
+        ).unwrap();
 
-      setTitle("");
-      setContent("");
+        setTitle("");
+        setContent("");
+        setUserId("");
+        navigate("/");
+      } catch (err) {
+        console.log("failed", err);
+      } finally {
+        setAddRequestStatus("idle");
+      }
     }
   };
 
