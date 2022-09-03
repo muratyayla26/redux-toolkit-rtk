@@ -3,9 +3,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { increment, decrement, reset, incByAmount } from "./counterSlice";
 
 const Counter = () => {
-  const [incAmount, setIncAmount] = useState(0);
-  const count = useSelector((state) => state.counter.count);
   const dispatch = useDispatch();
+  const count = useSelector((state) => state.counter.count);
+  const [incAmount, setIncAmount] = useState(0);
 
   const addValue = Number(incAmount) || 0;
 

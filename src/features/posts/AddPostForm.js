@@ -1,21 +1,23 @@
 import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { postAdded, addNewPost } from "./postsSlice";
+import { useSelector } from "react-redux";
 import { selectAllUsers } from "../users/usersSlice";
 import { useNavigate } from "react-router-dom";
+import { useAddNewPostMutation } from "./postsSlice";
+// import { postAdded, addNewPost } from "./postsSlice";
 
 const AddPostForm = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const users = useSelector(selectAllUsers);
+  const [addNewPost, { isLoading }] = useAddNewPostMutation();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [userId, setUserId] = useState("");
-  const [addRequestStatus, setAddRequestStatus] = useState("idle");
+  // const dispatch = useDispatch();
+  // const [addRequestStatus, setAddRequestStatus] = useState("idle");
+  // const canSave = [content, title, userId].every(Boolean) && addRequestStatus === "idle";
 
-  const canSave =
-    [content, title, userId].every(Boolean) && addRequestStatus === "idle";
+  const canSave = [content, title, userId].every(Boolean) && !isLoading;
 
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onContentChanged = (e) => setContent(e.target.value);
@@ -24,11 +26,11 @@ const AddPostForm = () => {
   const onSavePostClicked = async () => {
     if (canSave) {
       try {
-        setAddRequestStatus("pending");
-
-        const resultPayload = await dispatch(
-          addNewPost({ title, body: content, userId })
-        ).unwrap();
+        await addNewPost({ title, body: content, userId }).unwrap();
+        // setAddRequestStatus("pending");
+        // const resultPayload = await dispatch(
+        //   addNewPost({ title, body: content, userId })
+        // ).unwrap();
 
         setTitle("");
         setContent("");
@@ -37,7 +39,7 @@ const AddPostForm = () => {
       } catch (err) {
         console.log("failed", err);
       } finally {
-        setAddRequestStatus("idle");
+        // setAddRequestStatus("idle");
       }
     }
   };
@@ -79,4 +81,5 @@ const AddPostForm = () => {
     </section>
   );
 };
+
 export default AddPostForm;
