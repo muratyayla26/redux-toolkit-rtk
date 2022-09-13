@@ -10,4 +10,4 @@ As the methods used were changed, the old methods were commented out.
 
 To run application locally:
 + Clone the repo and run `npm install`
-+ Install [JSON server](https://www.npmjs.com/package/json-server) and run `json-server --watch ./data/db.json --port 3500`
++ Install [JSON server](https://www.npmjs.com/package/json-server) and run `json-server --watch ./data/db.json --port 3500` and then `npm start`
